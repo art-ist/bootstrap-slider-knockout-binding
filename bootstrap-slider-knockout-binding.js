@@ -1,5 +1,8 @@
 ko.bindingHandlers.sliderValue = {
 	init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+		//get Name as slider-plugin falls back to alternative name, if there is already a slider-plugin registered (e.g. jQueryUI)
+		var widgetName = $(element).bootstrapSlider ? 'bootstrapSlider' : 'slider';
+
 		var params = valueAccessor();
 
 		// Check whether the value observable is either placed directly or in the paramaters object.
@@ -10,20 +13,20 @@ ko.bindingHandlers.sliderValue = {
 		var valueObservable;
 		if (ko.isObservable(params)) {
 			valueObservable = params;
-			$(element).slider({value: ko.unwrap(params)});
+			$(element)[widgetName]({value: ko.unwrap(params)});
 		}
 		else {
 			valueObservable = params['value'];
 			if (!Array.isArray(valueObservable)) {
 				// Replace the 'value' field in the options object with the actual value
 				params['value'] = ko.unwrap(valueObservable);
-				$(element).slider(params);
+				$(element)[widgetName](params);
 			} 
 			else {
 				valueObservable = [params['value'][0], params['value'][1]];
 				params['value'][0] = ko.unwrap(valueObservable[0]);
 				params['value'][1] = ko.unwrap(valueObservable[1]);
-				$(element).slider(params);
+				$(element)[widgetName](params);
 			}
 		}
 
@@ -40,12 +43,15 @@ ko.bindingHandlers.sliderValue = {
 		
 		// Clean up
 		ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-			$(element).slider('destroy');
+			$(element)[widgetName]('destroy');
 			$(element).off('slide');
 		});
 
 	},
 	update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+		//get Name as slider-plugin falls back to alternative name, if there is already a slider-plugin registered (e.g. jQueryUI)
+		var widgetName = $(element).bootstrapSlider ? 'bootstrapSlider' : 'slider';
+
 		var modelValue = valueAccessor();
 		var valueObservable;
 		if (ko.isObservable(modelValue))
@@ -54,10 +60,10 @@ ko.bindingHandlers.sliderValue = {
 			valueObservable = modelValue['value'];
 
 		if (!Array.isArray(valueObservable)) {
-			$(element).slider('setValue', parseFloat(valueObservable()));
+			$(element)[widgetName]('setValue', parseFloat(valueObservable()));
 		} 
 		else {
-			$(element).slider('setValue', [parseFloat(valueObservable[0]()),parseFloat(valueObservable[1]())]);
+			$(element)[widgetName]('setValue', [parseFloat(valueObservable[0]()),parseFloat(valueObservable[1]())]);
 		}
 	}
 };
