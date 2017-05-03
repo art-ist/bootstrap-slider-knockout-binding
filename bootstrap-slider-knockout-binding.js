@@ -40,8 +40,9 @@ ko.bindingHandlers.sliderValue = {
 		$(div).addClass(classes);
 
 		//if enabled isObservable subscribe changes and propagate to slider
+		var enabledSubscription;
 		if (ko.isObservable(params['enabled'])) {
-			var enabledSubscription = params['enabled'].subscribe(function (newValue) {
+			enabledSubscription = params['enabled'].subscribe(function (newValue) {
 				if (newValue) $(element)[widgetName]('enable'); else $(element)[widgetName]('disable');
 			});
 		}
